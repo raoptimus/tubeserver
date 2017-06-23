@@ -1,0 +1,174 @@
+package v1
+
+import (
+	"gopkg.in/mgo.v2/bson"
+	"testing"
+	"ts/data"
+)
+
+func TestPhotoAlbumList(t *testing.T) {
+	conn, err := connectionToRpc()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer conn.Close()
+
+	req := Request{
+		Lang:  data.LanguageRussian,
+		Token: TEST_TOKEN,
+		Query: &Query{
+			"CategoryId": 1,
+		},
+		Sort: &SortInfo{
+			Field:  "PublishedDate",
+			Direct: SortDirectAsc,
+		},
+		Page: &Page{
+			Skip:  0,
+			Limit: 3,
+		},
+	}
+	var list PhotoAlbumList
+	err = conn.Call("PhotoController.List", &req, &list)
+
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	if len(list) == 0 {
+		t.Fatal("Return data is empty")
+	}
+
+	for _, v := range list {
+		if v.Id <= 0 {
+			t.Fatal("Data not vaild, Id is zero")
+		}
+		if v.Title == "" {
+			t.Fatal("Data not vaild, Title is empty")
+		}
+	}
+
+	//fmt.Println(toJson(list))
+}
+
+func TestPhotoAlbumGetPhotos(t *testing.T) {
+	conn, err := connectionToRpc()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer conn.Close()
+
+	var album data.PhotoAlbum
+	err = data.Context.PhotoAlbums.Find(bson.M{"PhotoCount": bson.M{"$gt": 0}}).One(&album)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	req := Request{
+		Token: TEST_TOKEN,
+		Query: &Query{
+			"PhotoAlbumId": album.Id,
+		},
+		Page: &Page{
+			Skip:  0,
+			Limit: 3,
+		},
+	}
+	var list PhotoList
+	err = conn.Call("PhotoController.GetPhotos", &req, &list)
+
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	for _, v := range list {
+		if v.AlbumId != album.Id {
+			t.Fatal("Data not vaild, AlbumId is not correct")
+		}
+		if v.Id <= 0 {
+			t.Fatal("Data not vaild, Id is zero")
+		}
+		if v.Url == "" {
+			t.Fatal("Data not vaild, Title is empty")
+		}
+	}
+
+	//fmt.Println(toJson(list))
+}
+
+func TestPhotoAlbumOne(t *testing.T) {
+	conn, err := connectionToRpc()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer conn.Close()
+
+	photoAlbumId := 449
+	req := Request{
+		Lang:  data.LanguageRussian,
+		Token: TEST_TOKEN,
+		Query: &Query{
+			"Id": photoAlbumId,
+		},
+	}
+	var v PhotoAlbum
+	err = conn.Call("PhotoController.One", &req, &v)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	if v.Id != photoAlbumId {
+		t.Fatal("Data is not valid; id not equals")
+	}
+
+	if v.Title == "" {
+		t.Fatal("Data is not valid; Title is empty")
+	}
+	if v.Id <= 0 {
+		t.Fatal("Data is not valid")
+	}
+
+	for _, c := range v.Comments {
+		if c.PhotoAlbumId != photoAlbumId {
+			t.Fatal("Data is not valid. Comment.PhotoAlbumId != Request.Query.Id")
+		}
+	}
+
+	//fmt.Println(toJson(v))
+}
+
+func TestPhotoAlbumComment(t *testing.T) {
+	conn, err := connectionToRpc()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer conn.Close()
+
+	req := Request{
+		Token: TEST_TOKEN,
+		Object: PhotoAlbumComment{
+			PhotoAlbumId: 449,
+			Body:         "мама мыла раму",
+		},
+	}
+
+	var comm PhotoAlbumComment
+	err = conn.Call("PhotoController.WriteComment", &req, &comm)
+
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	if comm.Id <= 0 {
+		t.Fatal("Comment id is empty")
+	}
+
+	if comm.PhotoAlbumId <= 0 {
+		t.Fatal("Comment PhotoAlbumId is empty")
+	}
+
+	if comm.Author == "" {
+		t.Fatal("Comment author is empty")
+	}
+
+	//fmt.Println(toJson(comm))
+}

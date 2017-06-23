@@ -1,0 +1,36 @@
+[submodule "src/gopkg.in/mgo.v2"]
+	path = src/gopkg.in/mgo.v2
+	url = https://github.com/go-mgo/mgo
+[submodule "src/github.com/ziutek/mymysql"]
+	path = src/github.com/ziutek/mymysql
+	url = https://github.com/ziutek/mymysql.git
+[submodule "src/github.com/abh/geoip"]
+	path = src/github.com/abh/geoip
+	url = https://github.com/abh/geoip.git
+[submodule "src/github.com/googollee/go-gcm"]
+	path = src/github.com/googollee/go-gcm
+	url = https://github.com/googollee/go-gcm.git
+[submodule "src/github.com/icrowley/go-yandex-translate"]
+	path = src/github.com/icrowley/go-yandex-translate
+	url = https://github.com/icrowley/go-yandex-translate.git
+[submodule "src/github.com/fiam/gounidecode"]
+	path = src/github.com/fiam/gounidecode
+	url = https://github.com/fiam/gounidecode.git
+[submodule "github.com/theplant/bingtranslator"]
+	path = github.com/theplant/bingtranslator
+	url = https://github.com/theplant/bingtranslator.git
+[submodule "src/github.com/theplant/bingtranslator"]
+	path = src/github.com/theplant/bingtranslator
+	url = https://github.com/theplant/bingtranslator.git
+[submodule "src/github.com/fvbock"]
+	path = src/github.com/fvbock
+	url = https://github.com/fvbock/gorequests.git
+[submodule "src/github.com/fvbock/gorequests"]
+	path = src/github.com/fvbock/gorequests
+	url = https://github.com/fvbock/gorequests.git
+[submodule "src/github.com/raoptimus/gserv"]
+	path = src/github.com/raoptimus/gserv
+	url = git@github.com:raoptimus/gserv.git
+[submodule "src/github.com/raoptimus/rlog"]
+	path = src/github.com/raoptimus/rlog
+	url = git@github.com:raoptimus/rlog.git
